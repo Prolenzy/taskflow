@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { MONGODB_URI, PORT } = require('./config/config');
+require('dotenv').config();
 const securityMiddleware = require('./middleware/security');
 
 const app = express();
@@ -10,10 +10,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(errorHandler);
-app.use(securityMiddleware);
+
 
 // MongoDB Connection
-mongoose.connect(MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/taskflow', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { MONGODB_URI, PORT } = require('./config/config');
+require('dotenv').config();
 const securityMiddleware = require('./middleware/security');
 
 const app = express();
