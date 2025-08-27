@@ -10,10 +10,13 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(securityMiddleware); // This should be after express.json()
+app.use(securityMiddleware);
 
-// Remove deprecated MongoDB options
-mongoose.connect(MONGODB_URI);
+// MongoDB Connection
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 mongoose.connection.on('connected', () => {
   console.log('Connected to MongoDB');
@@ -37,6 +40,9 @@ app.get('/', (req, res) => {
 
 // Error handling middleware (must be after routes)
 app.use(errorHandler);
+
+// REMOVE THIS LINE - it's a duplicate declaration:
+// const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
