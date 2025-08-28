@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const { JWT_SECRET } = require('../config/config'); // Import JWT_SECRET
 const router = express.Router();
 
 // Register route
@@ -21,9 +22,9 @@ router.post('/register', async (req, res) => {
     user = new User({ username, email, password });
     await user.save();
 
-    // Generate JWT token
+    // Generate JWT token - USE JWT_SECRET FROM CONFIG
     const payload = { id: user.id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
 
     res.status(201).json({
       token,
@@ -34,12 +35,12 @@ router.post('/register', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error);
+    console.error('Registration error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
-// Login route
+// Login route - ALSO UPDATE THIS TO USE JWT_SECRET
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -56,9 +57,9 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Generate JWT token
+    // Generate JWT token - USE JWT_SECRET FROM CONFIG
     const payload = { id: user.id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
 
     res.json({
       token,
@@ -69,7 +70,7 @@ router.post('/login', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error);
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -85,7 +86,7 @@ router.get('/me', auth, async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error);
+    console.error('Get user error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
